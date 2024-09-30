@@ -17,6 +17,9 @@ jobs:
       run:
         shell: bash
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
     - name: Run setup jobs
       uses: ./.github/actions/terraform-setup
       with:
