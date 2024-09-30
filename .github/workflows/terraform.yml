@@ -13,11 +13,15 @@ jobs:
     name: 'Terraform Apply'
     runs-on: ubuntu-latest
     environment: 'Terraform Environment'
-    uses: ./.github/workflows/terraform-setup.yml
     defaults:
       run:
         shell: bash
     steps:
+    - name: Run setup jobs
+      uses: ./.github/actions/common-steps
+      with:
+        aws_region: "us-east-1"
+
     - name: Terraform Plan
       run: terraform plan -input=false -out=tfplan
 
@@ -31,16 +35,19 @@ jobs:
     #   if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     #   run: terraform apply -auto-approve -input=false
 
-  terraform-destroy:
-    name: 'Terraform Destroy'
-    runs-on: ubuntu-latest
-    environment: 'Terraform Environment'
-    uses: ./.github/workflows/terraform-setup.yml
-    needs: terraform-apply
-    defaults:
-      run:
-        shell: bash
-    steps:
-    - name: Terraform Destroy
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform destroy -target=junk -input=false
+  # terraform-destroy:
+  #   name: 'Terraform Destroy'
+  #   runs-on: ubuntu-latest
+  #   environment: 'Terraform Environment'
+  #   needs: terraform-apply
+  #   defaults:
+  #     run:
+  #       shell: bash
+  #   steps:
+  #   - name: Run setup jobs
+  #     uses: ./.github/actions/common-steps
+  #     with:
+  #       aws_region: "us-east-1"
+  #   - name: Terraform Destroy
+  #     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #     run: terraform destroy -target=junk -input=false
