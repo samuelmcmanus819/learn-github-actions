@@ -4,6 +4,12 @@ inputs:
   aws_region:
     description: "AWS Region"
     required: true
+  aws_access_key_id:
+    description: "The access key id to deploy the code with"
+    required: true
+  aws_secret_access_key:
+    description: "The secret access key to deploy the code with"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -13,6 +19,9 @@ runs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v3
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ inputs.aws_region }}
+
+    - name: Terraform Init
+      run: terraform init
