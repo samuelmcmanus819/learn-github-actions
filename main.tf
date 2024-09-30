@@ -1,8 +1,8 @@
-resource "aws_s3_bucket" "example" {
-  bucket = "my-tf-test-bucket99999999999999999"
+resource "aws_organizations_organization" "org" {
+  feature_set = "ALL"
+}
 
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
-  }
-} 
+resource "aws_organizations_account" "account" {
+  name  = "samuelmcmanus819"
+  email = "samuel.patrick.mcmanus@gmail.com"
+}
