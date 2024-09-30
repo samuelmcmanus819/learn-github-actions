@@ -10,6 +10,9 @@ inputs:
   aws_secret_access_key:
     description: "The secret access key to deploy the code with"
     required: true
+defaults:
+  run:
+    shell: bash
 runs:
   using: "composite"
   steps:
