@@ -49,10 +49,6 @@ jobs:
   #     run:
   #       shell: bash
   #   steps:
-  #   - name: Run setup jobs
-  #     uses: ./.github/actions/terraform-setup
-  #     with:
-  #       aws_region: "us-east-1"
   #   - name: Terraform Destroy
   #     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
   #     run: terraform destroy -target=junk -input=false
