@@ -1,0 +1,20 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Deny",
+        "Action": [
+          "ec2:EnableAwsRegion",
+          "ec2:DisableAwsRegion"
+        ],
+        "Resource": "*",
+        "Condition": {
+          "StringNotLike": {
+            "aws:PrincipalArn": [
+              "arn:aws:iam::*:role/SuperAdmin"
+            ]
+          }
+        }
+      }
+    ]
+  }
