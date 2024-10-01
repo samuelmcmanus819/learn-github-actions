@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: 'Security Scanning'
 
 on:
   push:
