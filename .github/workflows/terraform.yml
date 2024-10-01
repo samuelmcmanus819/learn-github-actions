@@ -49,6 +49,16 @@ jobs:
       run:
         shell: bash
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Run setup jobs
+      uses: ./.github/actions/terraform-setup
+      with:
+        aws_region: "us-east-1"
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        
     - name: Terraform Destroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform destroy -target=aws_organizations_policy.deny_region_modify_except_root -input=false
+      run: terraform destroy -target=aws_organizations_policy.deny_region_modify_except_root -input=false -auto-approve
