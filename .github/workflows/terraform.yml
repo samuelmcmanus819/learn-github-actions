@@ -37,18 +37,6 @@ jobs:
         name: terraform-plan
         path: tfplan
 
-    - name: Comment on Pull Request with Plan Link
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v6
-      with:
-        script: |
-          github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.issue.number,
-            body: `Terraform plan uploaded: [terraform-plan](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`
-          })
-
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
