@@ -12,6 +12,9 @@ permissions:
 jobs:
   terraform-apply:
     name: 'Terraform Apply'
+    concurrency:
+      group: ${{ github.ref }}-terraform
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     environment: 'Terraform Environment'
     defaults:
@@ -57,6 +60,9 @@ jobs:
             
   terraform-destroy:
     name: 'Terraform Destroy'
+    concurrency:
+      group: ${{ github.ref }}-terraform
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     environment: 'Terraform Environment'
     needs: terraform-apply
