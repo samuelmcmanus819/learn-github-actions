@@ -61,4 +61,10 @@ jobs:
         
     - name: Terraform Destroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform destroy -target=aws_organizations_policy.deny_region_modify_except_root -input=false -auto-approve
+      run: |
+        terraform destroy \
+          -target aws_organizations_policy.deny_region_modify_except_root \
+          -target aws_organizations_policy.deny_unused_regions \
+          -target aws_organizations_policy.deny_unencrypted_buckets \
+          -target aws_organizations_policy.deny_public_buckets \
+          -input=false -auto-approve

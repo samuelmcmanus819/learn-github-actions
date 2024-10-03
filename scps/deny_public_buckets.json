@@ -1,0 +1,24 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "DenyCreatePublicBucketInAccounts",
+        "Effect": "Deny",
+        "Action": "s3:CreateBucket",
+        "Resource": "arn:aws:s3:::*",
+        "Condition": {
+          "Bool": {
+            "s3:PublicAccessBlockConfiguration.IgnorePublicAcls": "false",
+            "s3:PublicAccessBlockConfiguration.BlockPublicAcls": "false",
+            "s3:PublicAccessBlockConfiguration.BlockPublicPolicy": "false",
+            "s3:PublicAccessBlockConfiguration.RestrictPublicBuckets": "false"
+          },
+          "StringNotEquals": {
+            "aws:PrincipalAccount": [
+              "286812073492"
+            ]
+          }
+        }
+      }
+    ]
+  }
