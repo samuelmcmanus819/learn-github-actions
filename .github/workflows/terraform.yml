@@ -7,10 +7,15 @@ on:
 
 permissions:
   contents: read
+  pull-requests	: write
 
 jobs:
   terraform-apply:
     name: 'Terraform Apply'
+    # Don't run multiple terraform jobs simultaneously
+    concurrency:
+      group: ${{ github.ref }}-terraform
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     environment: 'Terraform Environment'
     defaults:
@@ -31,7 +36,8 @@ jobs:
       run: terraform plan -input=false -out=tfplan
 
     - name: Upload Terraform Plan
-      uses: actions/upload-artifact@v3
+      id: upload-artifact
+      uses: actions/upload-artifact@v4
       with:
         name: terraform-plan
         path: tfplan
@@ -39,9 +45,27 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve -input=false
-
+    
+    # Comment on the PR with a link to the Terraform Plan artifact
+    - name: Comment on Pull Request
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.pull_request.number,
+            body: `Terraform plan uploaded: [terraform-plan](${{ steps.upload-artifact.outputs.artifact-url }})`
+          })
+            
   terraform-destroy:
     name: 'Terraform Destroy'
+    # Don't run multiple terraform jobs simultaneously
+    concurrency:
+      group: ${{ github.ref }}-terraform
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     environment: 'Terraform Environment'
     needs: terraform-apply
@@ -61,4 +85,10 @@ jobs:
         
     - name: Terraform Destroy
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform destroy -target=aws_organizations_policy.deny_region_modify_except_root -input=false -auto-approve
+      run: |
+        terraform destroy \
+          -target aws_organizations_policy.deny_region_modify_except_root \
+          -target aws_organizations_policy.deny_unused_regions \
+          -target aws_organizations_policy.deny_unencrypted_buckets \
+          -target aws_organizations_policy.deny_public_buckets \
+          -input=false -auto-approve

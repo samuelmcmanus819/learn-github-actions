@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyUnencryptedS3Bucket",
+      "Effect": "Deny",
+      "Action": "s3:CreateBucket",
+      "Resource": "arn:aws:s3:::*",
+      "Condition": {
+        "Bool": {
+          "aws:RequestObjectEncryption": "false"
+        },
+        "ArnNotLike": {
+          "aws:RequestResourceArn": [
+            "arn:aws:s3:::learn-jenkins-site"
+          ]
+        }
+      }
+    }
+  ]
+}
